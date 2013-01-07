@@ -1,44 +1,21 @@
-require "spec"
-require "rack/test"
-require "rack/throttle"
+require 'rubygems'
+require 'bundler/setup'
+require 'rack'
+require 'rack/test'
+require 'rspec'
+require 'rack/throttle'
+require 'timecop'
+require File.dirname(__FILE__) + '/fixtures/fake_app'
 
-def example_target_app
-  @target_app ||= mock("Example Rack App")
-  @target_app.stub!(:call).and_return([200, {}, "Example App Body"])
-end
+Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each {|f| require f}
 
-Spec::Matchers.define :show_allowed_response do
-  match do |body|
-    body.include?("Example App Body")
+RSpec.configure do |config|
+  config.mock_with :rspec
+  config.include Rack::Test::Methods
+
+  def example_target_app
+    @target_app ||= Rack::Lint.new(Rack::Test::FakeApp.new)
+    @target_app.stub(:call).with(anything).and_return([200, {}, "Hello Throttler!"])
+    @target_app
   end
-  
-  failure_message_for_should do
-    "expected response to show the allowed response" 
-  end 
-
-  failure_message_for_should_not do
-    "expected response not to show the allowed response" 
-  end
-  
-  description do
-    "expected the allowed response"
-  end 
-end
-
-Spec::Matchers.define :show_throttled_response do
-  match do |body|
-    body.include?("Rate Limit Exceeded")
-  end
-  
-  failure_message_for_should do
-    "expected response to show the throttled response" 
-  end 
-
-  failure_message_for_should_not do
-    "expected response not to show the throttled response" 
-  end
-  
-  description do
-    "expected the throttled response"
-  end 
 end

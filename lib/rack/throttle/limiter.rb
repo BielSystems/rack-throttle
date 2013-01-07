@@ -33,7 +33,7 @@ module Rack; module Throttle
       request = Rack::Request.new(env)
       if allowed?(request)
         status, headers, body = app.call(env)
-        headers = rate_limit_headers(request, headers) if self.is_a?(TimeWindow) && need_protection?
+        headers = rate_limit_headers(request, headers) if self.is_a?(TimeWindow) && need_protection?(request)
         [status, headers, body]
       else
         rate_limit_exceeded

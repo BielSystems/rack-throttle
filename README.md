@@ -115,6 +115,19 @@ significantly more complex than what we've provided for, you can also define
 entirely new kinds of throttling strategies by subclassing the
 `Rack::Throttle::Limiter` base class directly.
 
+
+
+Rate limit headers
+--------------------------
+
+Hourly and Daily rate limits sets automatically two rate limit headers to
+let the client know the max number of requests and the remaining available.
+
+    HTTP/1.1 200 OK
+    X-RateLimit-Limit: 5000
+    X-RateLimit-Remaining: 4999
+
+
 HTTP Client Identification
 --------------------------
 

@@ -31,7 +31,13 @@ module Rack; module Throttle
     # @see    http://rack.rubyforge.org/doc/SPEC.html
     def call(env)
       request = Rack::Request.new(env)
-      allowed?(request) ? app.call(env) : rate_limit_exceeded
+      if allowed?(request)
+        status, headers, body = app.call(env)
+        headers = rate_limit_headers(request, headers) if self.is_a?(TimeWindow) && need_protection?
+        [status, headers, body]
+      else
+        rate_limit_exceeded
+      end
     end
 
     ##

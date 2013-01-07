@@ -17,5 +17,16 @@ module Rack; module Throttle
         allowed = true
       end
     end
+
+    def rate_limit_headers(request, headers)
+      headers['X-RateLimit-Limit'] = max_per_window.to_s
+      headers['X-RateLimit-Remaining'] = ([0, max_per_window - (cache_get(cache_key(request)).to_i rescue 1)].max).to_s
+      headers
+    end
+
+    def need_protection?
+      true
+    end
+
   end
 end; end

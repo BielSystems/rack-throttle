@@ -24,7 +24,7 @@ module Rack; module Throttle
       headers
     end
 
-    def need_protection?
+    def need_protection?(request)
       true
     end
 

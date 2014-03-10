@@ -38,7 +38,12 @@ module Rack; module Throttle
     # @param  [Rack::Request] request
     # @return [String]
     def cache_key(request)
-      [super, Time.now.strftime('%Y-%m-%dT%H')].join(':')
+      [super, cache_time_key].join(':')
+    end
+
+    #check for rails time zone
+    def cache_time_key
+      (Time.respond_to?(:current) ? Time.current : Time.now).strftime('%Y-%m-%dT%H')
     end
   end
 end; end
